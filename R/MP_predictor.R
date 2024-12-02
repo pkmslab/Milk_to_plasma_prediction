@@ -294,7 +294,7 @@ MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/c
   test_matrix <- xgboost::xgb.DMatrix(data = as.matrix(XGB_data))
 
   # Make prediction using existing model
-  pred_xgboost <- stats::predict(bstDMatrix, test_matrix)
+  pred_xgboost <- stats::predict(usethis::use_data(bstDMatrix), test_matrix)
   xgb_pred <- data.frame(MP_ratio = (10^pred_xgboost))
 
   tictoc::toc()
