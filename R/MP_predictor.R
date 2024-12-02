@@ -24,6 +24,10 @@
 #' @details If you are unsure about which name to use, you could go onto the CHEMBL website: https://www.ebi.ac.uk/chembl/
 #' and find the drug of interest. Then enter the name into the function and the function should work as intended.
 #'
+#' @import tidyverse
+#' @importFrom stats predict
+#' @importFrom dplyr %>%
+#'
 #' @note
 #' Links to the webservice documentation:
 #' \itemize{
@@ -37,7 +41,11 @@
 MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/chembl/api/data/molecule/search",
                                    base_url = "https://www.ebi.ac.uk/chembl/api/data/activity", limit = 10000) {
 
-  library(dplyr)
+  for (drug_name in drug_names) {
+    if(!is.character(drug_name)) {
+      return(paste0("Sorry, you need to ensure your input is a character. Your input is ", class(drug_name)))
+      }
+    }
 
   # Initialize data frames to store results
   ID_all_results <- data.frame()
@@ -96,16 +104,16 @@ MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/c
 
       # Extract molecule data
       molecule_data <- parsed_data %>%
-        select(pref_name, molecule_chembl_id, molecule_properties.full_mwt,
+        dplyr::select(pref_name, molecule_chembl_id, molecule_properties.full_mwt,
                molecule_properties.cx_most_apka, molecule_properties.cx_most_bpka,
                molecule_properties.psa, molecule_properties.hbd, molecule_properties.cx_logp,
                molecule_properties.cx_logd, molecule_properties.molecular_species)
 
       # Add Drug Name
-      molecule_data <- mutate(molecule_data, Drug_Name = drug_name)
+      molecule_data <- dplyr::mutate(molecule_data, Drug_Name = drug_name)
 
       # Combine results
-      ID_all_results <- bind_rows(ID_all_results, molecule_data)
+      ID_all_results <- dplyr::bind_rows(ID_all_results, molecule_data)
 
       # Update the offset for pagination
       offset <- offset + limit
@@ -113,11 +121,11 @@ MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/c
 
     # Filter the results case-insensitively
     ID_all_results <- ID_all_results %>%
-      filter(tolower(Drug_Name) == tolower(pref_name))
+      dplyr::filter(tolower(Drug_Name) == tolower(pref_name))
   }
-  toc()
+  tictoc::toc()
 
-  tic("Activity data")
+  tictoc::tic("Activity data")
   # Loop through each drug name in the list
   for(chembl_id in ID_all_results$molecule_chembl_id) {
 
@@ -145,13 +153,13 @@ MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/c
 
       # Extract activity data
       activity_data <- parsed_data %>%
-        select(molecule_chembl_id, standard_type, standard_value, units, assay_description)
+        dplyr::select(molecule_chembl_id, standard_type, standard_value, units, assay_description)
 
       # Add the ChEMBL ID for reference
-      activity_data <- mutate(activity_data, Entry = chembl_id)
+      activity_data <- dplyr::mutate(activity_data, Entry = chembl_id)
 
       # Combine results
-      Fu_all_results <- bind_rows(Fu_all_results, activity_data)
+      Fu_all_results <- dplyr::bind_rows(Fu_all_results, activity_data)
 
       # Update the offset for pagination
       offset <- offset + limit
@@ -159,139 +167,139 @@ MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/c
 
     # Filter the activity results for specific types (e.g., "Fu")
     Fu_all_results <- Fu_all_results %>%
-      filter(tolower(Entry) == tolower(molecule_chembl_id), standard_type == "Fu")
+      dplyr::filter(tolower(Entry) == tolower(molecule_chembl_id), standard_type == "Fu")
 
     # Combine molecule and activity data
-    drug_info <- left_join(ID_all_results, Fu_all_results, by = c("molecule_chembl_id" = "Entry")) %>%
-      mutate(Drugs = pref_name,
-             CHEMBL = molecule_chembl_id,
-             Type = molecule_properties.molecular_species,
-             MW = as.numeric(molecule_properties.full_mwt),
-             pka1 = as.numeric(molecule_properties.cx_most_apka),
-             pka2 = as.numeric(molecule_properties.cx_most_bpka),
-             PSA = as.numeric(molecule_properties.psa),
-             HBD = as.numeric(molecule_properties.hbd),
-             LogP = as.numeric(molecule_properties.cx_logp),
-             LogD7.4 = as.numeric(molecule_properties.cx_logd)) %>%
-      filter(stringr::str_detect(assay_description, stringr::regex("human|plasma", ignore_case = TRUE))) %>%
-      mutate(pka1 = dplyr::coalesce(pka1, pka2),
+    drug_info <- dplyr::left_join(ID_all_results, Fu_all_results, by = c("molecule_chembl_id" = "Entry")) %>%
+      dplyr::mutate(Drugs = pref_name,
+                   CHEMBL = molecule_chembl_id,
+                   Type = molecule_properties.molecular_species,
+                   MW = as.numeric(molecule_properties.full_mwt),
+                   pka1 = as.numeric(molecule_properties.cx_most_apka),
+                   pka2 = as.numeric(molecule_properties.cx_most_bpka),
+                   PSA = as.numeric(molecule_properties.psa),
+                   HBD = as.numeric(molecule_properties.hbd),
+                   LogP = as.numeric(molecule_properties.cx_logp),
+                   LogD7.4 = as.numeric(molecule_properties.cx_logd)) %>%
+      dplyr::filter(stringr::str_detect(assay_description, stringr::regex("human|plasma", ignore_case = TRUE))) %>%
+      dplyr::mutate(pka1 = dplyr::coalesce(pka1, pka2),
              pka2 = ifelse(pka2 == pka1, NA, pka2)) %>%
-      distinct(pka1, pka2, .keep_all = TRUE) %>%
-      mutate(fup = as.numeric(standard_value))
+      dplyr::distinct(pka1, pka2, .keep_all = TRUE) %>%
+      dplyr::mutate(fup = as.numeric(standard_value))
 
     # Edit the data before running calculations/predictions
     drug_info <- drug_info %>%
-      select(Drugs, Type, MW, pka1, pka2, PSA, HBD, LogP, LogD7.4, fup)
+      dplyr::select(Drugs, Type, MW, pka1, pka2, PSA, HBD, LogP, LogD7.4, fup)
   }
-  toc()
+  tictoc::toc()
 
   # Edit the data
-  prelim_drug_data <- edit(drug_info, editor = "xedit")
+  prelim_drug_data <- utils::edit(drug_info, editor = "xedit")
 
-  tic("MP Predictions")
+  tictoc::tic("MP Predictions")
 
   # Required model parameters
   drug_data <- prelim_drug_data %>%
-    mutate(
-      funp = case_when(
-        stringr::str_detect(Type, stringr::regex("NEUTRAL", ignore_case = TRUE)) & is.na(pka2) ~ 1,
-        stringr::str_detect(Type, stringr::regex("ACID", ignore_case = TRUE)) & is.na(pka2) ~ 1/(1+10^(7.4-pka1)),
-        stringr::str_detect(Type, stringr::regex("BASE", ignore_case = TRUE)) & is.na(pka2) ~ 1/(1+10^(pka1-7.4)),
-        stringr::str_detect(Type, stringr::regex("NEUTRAL", ignore_case = TRUE)) & !is.na(pka2) ~ 1,
-        stringr::str_detect(Type, stringr::regex("ACID", ignore_case = TRUE)) & !is.na(pka2) ~ 1/(1+10^(7.4 - pka1)+10^(7.4 - pka2)+10^(2*7.4 - (pka1+pka2))),
-        stringr::str_detect(Type, stringr::regex("BASE", ignore_case = TRUE)) & !is.na(pka2) ~ 1/(1+10^(pka1-7.4)+10^(pka2-7.4)+10^((pka1+pka2)-2*7.4)),
-        stringr::str_detect(Type, stringr::regex("AMPHOLYTE|ZWITTERION", ignore_case = TRUE)) & !is.na(pka2) ~ 1/(1+10^(7.4-pka1)+10^(pka2-7.4)+10^(pka2-pka1)),
-        TRUE ~ NA_real_  # Default case for unmatched Types
-      ),
-      funsm = case_when(
-        stringr::str_detect(Type, stringr::regex("NEUTRAL", ignore_case = TRUE)) & is.na(pka2) ~ 1,
-        stringr::str_detect(Type, stringr::regex("ACID", ignore_case = TRUE)) & is.na(pka2) ~ 1/(1+10^(7.2-pka1)),
-        stringr::str_detect(Type, stringr::regex("BASE", ignore_case = TRUE)) & is.na(pka2) ~ 1/(1+10^(pka1-7.2)),
-        stringr::str_detect(Type, stringr::regex("NEUTRAL", ignore_case = TRUE)) & !is.na(pka2) ~ 1,
-        stringr::str_detect(Type, stringr::regex("ACID", ignore_case = TRUE)) & !is.na(pka2) ~ 1/(1+10^(7.2 - pka1)+10^(7.2 - pka2)+10^(2*7.2 - (pka1+pka2))),
-        stringr::str_detect(Type, stringr::regex("BASE", ignore_case = TRUE)) & !is.na(pka2) ~ 1/(1+10^(pka1-7.2)+10^(pka2-7.2)+10^((pka1+pka2)-2*7.2)),
-        stringr::str_detect(Type, stringr::regex("AMPHOLYTE|ZWITTERION", ignore_case = TRUE)) & !is.na(pka2) ~ 1/(1+10^(7.2-pka1)+10^(pka2-7.2)+10^(pka2-pka1)),
-        TRUE ~ NA_real_
-      ),
-      MuPu = funp/funsm
+    dplyr::mutate(
+        funp = case_when(
+          stringr::str_detect(Type, stringr::regex("NEUTRAL", ignore_case = TRUE)) & is.na(pka2) ~ 1,
+          stringr::str_detect(Type, stringr::regex("ACID", ignore_case = TRUE)) & is.na(pka2) ~ 1/(1+10^(7.4-pka1)),
+          stringr::str_detect(Type, stringr::regex("BASE", ignore_case = TRUE)) & is.na(pka2) ~ 1/(1+10^(pka1-7.4)),
+          stringr::str_detect(Type, stringr::regex("NEUTRAL", ignore_case = TRUE)) & !is.na(pka2) ~ 1,
+          stringr::str_detect(Type, stringr::regex("ACID", ignore_case = TRUE)) & !is.na(pka2) ~ 1/(1+10^(7.4 - pka1)+10^(7.4 - pka2)+10^(2*7.4 - (pka1+pka2))),
+          stringr::str_detect(Type, stringr::regex("BASE", ignore_case = TRUE)) & !is.na(pka2) ~ 1/(1+10^(pka1-7.4)+10^(pka2-7.4)+10^((pka1+pka2)-2*7.4)),
+          stringr::str_detect(Type, stringr::regex("AMPHOLYTE|ZWITTERION", ignore_case = TRUE)) & !is.na(pka2) ~ 1/(1+10^(7.4-pka1)+10^(pka2-7.4)+10^(pka2-pka1)),
+          TRUE ~ NA_real_  # Default case for unmatched Types
+        ),
+        funsm = case_when(
+          stringr::str_detect(Type, stringr::regex("NEUTRAL", ignore_case = TRUE)) & is.na(pka2) ~ 1,
+          stringr::str_detect(Type, stringr::regex("ACID", ignore_case = TRUE)) & is.na(pka2) ~ 1/(1+10^(7.2-pka1)),
+          stringr::str_detect(Type, stringr::regex("BASE", ignore_case = TRUE)) & is.na(pka2) ~ 1/(1+10^(pka1-7.2)),
+          stringr::str_detect(Type, stringr::regex("NEUTRAL", ignore_case = TRUE)) & !is.na(pka2) ~ 1,
+          stringr::str_detect(Type, stringr::regex("ACID", ignore_case = TRUE)) & !is.na(pka2) ~ 1/(1+10^(7.2 - pka1)+10^(7.2 - pka2)+10^(2*7.2 - (pka1+pka2))),
+          stringr::str_detect(Type, stringr::regex("BASE", ignore_case = TRUE)) & !is.na(pka2) ~ 1/(1+10^(pka1-7.2)+10^(pka2-7.2)+10^((pka1+pka2)-2*7.2)),
+          stringr::str_detect(Type, stringr::regex("AMPHOLYTE|ZWITTERION", ignore_case = TRUE)) & !is.na(pka2) ~ 1/(1+10^(7.2-pka1)+10^(pka2-7.2)+10^(pka2-pka1)),
+          TRUE ~ NA_real_
+        ),
+        MuPu = funp/funsm
     )
 
   ## Phase distribution
   PD <- drug_data %>%
-    mutate(
-      fusm = ((fup^0.448)/(0.000694^0.448 + fup^0.448)),
-      Dmilk7.2 = case_when(
-        stringr::str_detect(Type, stringr::regex("NEUTRAL", ignore_case = TRUE)) & is.na(pka2) ~ 10^(-0.88 + 1.29*LogD7.4),
-        stringr::str_detect(Type, stringr::regex("NEUTRAL", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*LogD7.4),
-        stringr::str_detect(Type, stringr::regex("ACID", ignore_case = TRUE)) & is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
-        stringr::str_detect(Type, stringr::regex("ACID", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
-        stringr::str_detect(Type, stringr::regex("BASE", ignore_case = TRUE)) & is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
-        stringr::str_detect(Type, stringr::regex("BASE", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
-        stringr::str_detect(Type, stringr::regex("AMPHOLYTE|ZWITTERION", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
-        TRUE ~ NA_real_
-      ),
-      Phase_Distribution_MP = (fup*MuPu*(0.955/fusm + 0.045*Dmilk7.2))) %>%
-    select(Phase_Distribution_MP)
+    dplyr::mutate(
+        fusm = ((fup^0.448)/(0.000694^0.448 + fup^0.448)),
+        Dmilk7.2 = case_when(
+          stringr::str_detect(Type, stringr::regex("NEUTRAL", ignore_case = TRUE)) & is.na(pka2) ~ 10^(-0.88 + 1.29*LogD7.4),
+          stringr::str_detect(Type, stringr::regex("NEUTRAL", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*LogD7.4),
+          stringr::str_detect(Type, stringr::regex("ACID", ignore_case = TRUE)) & is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
+          stringr::str_detect(Type, stringr::regex("ACID", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
+          stringr::str_detect(Type, stringr::regex("BASE", ignore_case = TRUE)) & is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
+          stringr::str_detect(Type, stringr::regex("BASE", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
+          stringr::str_detect(Type, stringr::regex("AMPHOLYTE|ZWITTERION", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
+          TRUE ~ NA_real_
+        ),
+        Phase_Distribution_MP = (fup*MuPu*(0.955/fusm + 0.045*Dmilk7.2))) %>%
+    dplyr::select(Phase_Distribution_MP)
 
   ## Koshimichi et al.
   Koshi <- drug_data %>%
-    mutate(
-      fusm = ((fup^0.448)/(0.000694^0.448 + fup^0.448)),
-      Dmilk7.2 = case_when(
-        stringr::str_detect(Type, stringr::regex("NEUTRAL", ignore_case = TRUE)) & is.na(pka2) ~ 10^(-0.88 + 1.29*LogD7.4),
-        stringr::str_detect(Type, stringr::regex("NEUTRAL", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*LogD7.4),
-        stringr::str_detect(Type, stringr::regex("ACID", ignore_case = TRUE)) & is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
-        stringr::str_detect(Type, stringr::regex("ACID", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
-        stringr::str_detect(Type, stringr::regex("BASE", ignore_case = TRUE)) & is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
-        stringr::str_detect(Type, stringr::regex("BASE", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
-        stringr::str_detect(Type, stringr::regex("AMPHOLYTE|ZWITTERION", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
-        TRUE ~ NA_real_
-      ),
-      fm_total = (1/(0.955/fusm + 0.045*Dmilk7.2)),
-      CLre = 10^(2.793 + 0.179*LogP - 0.132*HBD),
-      CLsec = 10^(-3.912 - 0.015*PSA + 3.367*log10(MW) - 0.164*log10((10^LogP)/(10^LogD7.4))),
-      Koshi_MP = ((CLsec/CLre)*(fup/fm_total))) %>%
-    select(Koshi_MP)
+    dplyr::mutate(
+        fusm = ((fup^0.448)/(0.000694^0.448 + fup^0.448)),
+        Dmilk7.2 = case_when(
+          stringr::str_detect(Type, stringr::regex("NEUTRAL", ignore_case = TRUE)) & is.na(pka2) ~ 10^(-0.88 + 1.29*LogD7.4),
+          stringr::str_detect(Type, stringr::regex("NEUTRAL", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*LogD7.4),
+          stringr::str_detect(Type, stringr::regex("ACID", ignore_case = TRUE)) & is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
+          stringr::str_detect(Type, stringr::regex("ACID", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
+          stringr::str_detect(Type, stringr::regex("BASE", ignore_case = TRUE)) & is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
+          stringr::str_detect(Type, stringr::regex("BASE", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
+          stringr::str_detect(Type, stringr::regex("AMPHOLYTE|ZWITTERION", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
+          TRUE ~ NA_real_
+        ),
+        fm_total = (1/(0.955/fusm + 0.045*Dmilk7.2)),
+        CLre = 10^(2.793 + 0.179*LogP - 0.132*HBD),
+        CLsec = 10^(-3.912 - 0.015*PSA + 3.367*log10(MW) - 0.164*log10((10^LogP)/(10^LogD7.4))),
+        Koshi_MP = ((CLsec/CLre)*(fup/fm_total))) %>%
+    dplyr::select(Koshi_MP)
 
   ## Log Phase distribution
   log_PD <- drug_data %>%
-    mutate(
-      fusm = ((fup^0.448)/(0.000694^0.448 + fup^0.448)),
-      Dmilk7.2 = case_when(
-        stringr::str_detect(Type, stringr::regex("NEUTRAL", ignore_case = TRUE)) & is.na(pka2) ~ 10^(-0.88 + 1.29*LogD7.4),
-        stringr::str_detect(Type, stringr::regex("NEUTRAL", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*LogD7.4),
-        stringr::str_detect(Type, stringr::regex("ACID", ignore_case = TRUE)) & is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
-        stringr::str_detect(Type, stringr::regex("ACID", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
-        stringr::str_detect(Type, stringr::regex("BASE", ignore_case = TRUE)) & is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
-        stringr::str_detect(Type, stringr::regex("BASE", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
-        stringr::str_detect(Type, stringr::regex("AMPHOLYTE|ZWITTERION", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
-        TRUE ~ NA_real_
-      ),
-      log_Phase_Distribution_MP = case_when(
-        stringr::str_detect(Type, stringr::regex("ACID", ignore_case = TRUE)) ~ exp(-0.405 + 9.36*log(MuPu) - 0.69*log(fup) - 1.54*log(0.955/fusm + 0.045*Dmilk7.2)),
-        stringr::str_detect(Type, stringr::regex("BASE", ignore_case = TRUE)) ~ exp(0.03 + 2.28*log(MuPu) + 0.89*log(fup) + 0.51*log(0.955/fusm + 0.045*Dmilk7.2)),
-        TRUE ~ NA_real_
-      )) %>%
-    select(log_Phase_Distribution_MP)
+    dplyr::mutate(
+          fusm = ((fup^0.448)/(0.000694^0.448 + fup^0.448)),
+          Dmilk7.2 = case_when(
+            stringr::str_detect(Type, stringr::regex("NEUTRAL", ignore_case = TRUE)) & is.na(pka2) ~ 10^(-0.88 + 1.29*LogD7.4),
+            stringr::str_detect(Type, stringr::regex("NEUTRAL", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*LogD7.4),
+            stringr::str_detect(Type, stringr::regex("ACID", ignore_case = TRUE)) & is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
+            stringr::str_detect(Type, stringr::regex("ACID", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
+            stringr::str_detect(Type, stringr::regex("BASE", ignore_case = TRUE)) & is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
+            stringr::str_detect(Type, stringr::regex("BASE", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
+            stringr::str_detect(Type, stringr::regex("AMPHOLYTE|ZWITTERION", ignore_case = TRUE)) & !is.na(pka2) ~ 10^(-0.88 + 1.29*(log10((10^LogD7.4)*funsm/funp))),
+            TRUE ~ NA_real_
+          ),
+          log_Phase_Distribution_MP = case_when(
+            stringr::str_detect(Type, stringr::regex("ACID", ignore_case = TRUE)) ~ exp(-0.405 + 9.36*log(MuPu) - 0.69*log(fup) - 1.54*log(0.955/fusm + 0.045*Dmilk7.2)),
+            stringr::str_detect(Type, stringr::regex("BASE", ignore_case = TRUE)) ~ exp(0.03 + 2.28*log(MuPu) + 0.89*log(fup) + 0.51*log(0.955/fusm + 0.045*Dmilk7.2)),
+            TRUE ~ NA_real_
+          )) %>%
+    dplyr::select(log_Phase_Distribution_MP)
 
   ## Meskin and Lien
   M_and_L <- drug_data %>%
-    mutate(
+    dplyr::mutate(
       M_and_L_MP = case_when(
         stringr::str_detect(Type, stringr::regex("ACID", ignore_case = TRUE)) ~ 10^(2.068-0.162*sqrt(MW)-0.185*LogP),
         stringr::str_detect(Type, stringr::regex("BASE", ignore_case = TRUE)) ~ 10^(0.265-0.153*LogP-0.128*(7.4-pka1)),
         TRUE ~ NA_real_
       )) %>%
-    select(M_and_L_MP)
+    dplyr::select(M_and_L_MP)
 
   ## XGBoost
   # Select variables
   XGB_data <- drug_data %>%
-    mutate(pKa1 = pka1) %>%
-    select(pKa1, fup, PSA, LogP, LogD7.4, funp, MuPu)
+    dplyr::mutate(pKa1 = pka1) %>%
+    dplyr::select(pKa1, fup, PSA, LogP, LogD7.4, funp, MuPu)
 
   # Store XGBoost variables as a matrix
-  test_matrix <- xgb.DMatrix(data = as.matrix(XGB_data))
+  test_matrix <- xgboost::xgb.DMatrix(data = as.matrix(XGB_data))
 
   ### NEED TO FIX XGBOOST
   xgbmodel <- system.file("extdata", "xgboost_model.rds", package = "MP.prediction")
@@ -301,7 +309,7 @@ MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/c
   pred_xgboost <- predict(bstDMatrix, test_matrix)
   xgb_pred <- data.frame(MP_ratio = (10^pred_xgboost))
 
-  toc()
+  tictoc::toc()
 
   # Report values and corresponding drugs
   MP_values <- data.frame(Drug = drug_data$Drugs,
