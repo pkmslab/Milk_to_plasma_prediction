@@ -37,6 +37,8 @@
 MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/chembl/api/data/molecule/search",
                                    base_url = "https://www.ebi.ac.uk/chembl/api/data/activity", limit = 10000) {
 
+  library(dplyr)
+
   # Initialize data frames to store results
   ID_all_results <- data.frame()
   Fu_all_results <- data.frame()
@@ -67,7 +69,7 @@ MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/c
     }
   }
 
-  tic("Molecular Properties")
+  tictoc::tic("Molecular Properties")
   # Loop through each drug name in the list
   for(drug_name in drug_names_chembl) {
 
@@ -292,8 +294,8 @@ MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/c
   test_matrix <- xgb.DMatrix(data = as.matrix(XGB_data))
 
   ### NEED TO FIX XGBOOST
-
-  bstDMatrix <- readRDS("xgboost_model.rds")
+  xgbmodel <- system.file("extdata", "xgboost_model.rds", package = "MP.prediction")
+  bstDMatrix <- readRDS(xgbmodel)
 
   # Make prediction using existing model
   pred_xgboost <- predict(bstDMatrix, test_matrix)
