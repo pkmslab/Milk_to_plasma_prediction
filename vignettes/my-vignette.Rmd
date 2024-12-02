@@ -1,5 +1,7 @@
 ---
-title: "my-vignette"
+title: "MP.prediction"
+author: "Akash R. Panjabi, Anil Maharaj"
+date: "2024-12-01"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{my-vignette}
