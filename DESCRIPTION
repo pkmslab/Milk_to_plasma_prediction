@@ -33,7 +33,8 @@ Imports:
     xgboost
 Suggests: 
     testthat (>= 3.0.0),
-    digest
+    digest,
+    knitr,
+    rmarkdown
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-Suggests: knitr,rmarkdown
