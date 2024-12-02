@@ -291,10 +291,14 @@ MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/c
     dplyr::select(pKa1, fup, PSA, LogP, LogD7.4, funp, MuPu)
 
   # Store XGBoost variables as a matrix
-  test_matrix <- xgboost::xgb.DMatrix(data = as.matrix(XGB_data))
+  test_matrix <- xgb.DMatrix(data = as.matrix(XGB_data))
+
+  ### NEED TO FIX XGBOOST
+
+  bstDMatrix <- readRDS("xgboost_model.rds")
 
   # Make prediction using existing model
-  pred_xgboost <- stats::predict(usethis::use_data(bstDMatrix), test_matrix)
+  pred_xgboost <- predict(bstDMatrix, test_matrix)
   xgb_pred <- data.frame(MP_ratio = (10^pred_xgboost))
 
   tictoc::toc()
