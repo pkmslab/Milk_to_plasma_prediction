@@ -1,11 +1,19 @@
 Package: MP.prediction
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Predicts the milk-to-plasma ratio (MP) using a variety of methods
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Author: 
+    person("Anil", "Maharaj",
+    email = "anil.maharaj@ubc.ca",
+    role = c("aut", "cre")
+    ),
+    person("Akash", "Panjabi", 
+    email = "akash.panjabi@ubc.ca", 
+    role = c("aut", "cre")
+    )
+Maintainer: The package maintainer <anil.maharaj@ubc.ca>
+Description: This package can be used to predict the MP using previously established literature equations and an 
+    extreme gradient boosted machine learning method. 
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -25,3 +33,5 @@ Suggests:
     testthat (>= 3.0.0),
     digest
 Config/testthat/edition: 3
+VignetteBuilder: knitr
+Suggests: knitr,rmarkdown
