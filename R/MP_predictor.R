@@ -85,7 +85,7 @@ MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/c
     offset <- 0
     repeat {
       # Construct the molecule search URL
-      url <- paste0(ID_url , "?q=", utils::URLencode(drug_name), "&limit=", limit, "&offset=", offset)
+      url <- paste0(ID_url ,"?q=", utils::URLencode(drug_name), "&limit=", limit, "&offset=", offset)
 
       req <- httr2::request(url)
       resp <- req |> httr2::req_headers(Accept = "application/json")
