@@ -172,7 +172,7 @@ MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/c
     # Combine molecule and activity data
     drug_info <- dplyr::left_join(ID_all_results, Fu_all_results, by = c("molecule_chembl_id" = "Entry")) %>%
       dplyr::mutate(Drugs = pref_name,
-                   CHEMBL = molecule_chembl_id,
+
                    Type = molecule_properties.molecular_species,
                    MW = as.numeric(molecule_properties.full_mwt),
                    pka1 = as.numeric(molecule_properties.cx_most_apka),
