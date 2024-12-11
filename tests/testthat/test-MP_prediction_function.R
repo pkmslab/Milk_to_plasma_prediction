@@ -8,3 +8,5 @@ test_that("expect_equal test comparing the input of aspirin", {
 test_that("expect_equal test comparing the input of custom", {
   expect_equal(digest::digest(MP_prediction_function("custom")), custom)
 })
+
+
