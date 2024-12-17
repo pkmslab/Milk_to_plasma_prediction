@@ -54,7 +54,9 @@ suppressPackageStartupMessages(library(MP.prediction))
 ```
 
 Here is how you can call the function to determine the MPs for aspirin
-and for a series of drugs.
+and for a series of drugs. Each feature nested within the function will
+produce a time stamp. This allows the user to see each feature run in
+real-time.
 
 ``` r
 ## Example code
