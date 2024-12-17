@@ -24,7 +24,7 @@ You can install the development version of MP.prediction from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("akashp21/Milk_to_plasma_prediction")
+devtools::install_github("pkmslab/Milk_to_plasma_prediction")
 ```
 
 ## Example
