@@ -33,8 +33,17 @@ Below are basic examples which show you how to use the function and the
 output you will obtain:
 
 ``` r
-library(MP.prediction)
-## basic example code
+# Load the MP.prediction library
+suppressPackageStartupMessages(library(MP.prediction))
+```
+
+Here is how you can call the function to determine the MPs for aspirin
+and for a series of drugs.
+
+``` r
+## Example code
+MP_prediction_function("aspirin")
+MP_prediction_function(c("dextromethorphan", "acetaminophen", "ibuprofen"))
 ```
 
 What is special about using `README.Rmd` instead of just `README.md`?
