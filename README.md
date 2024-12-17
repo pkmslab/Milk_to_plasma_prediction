@@ -38,18 +38,19 @@ own preferences.
 ## Required information
 
 The XGBoost model utilizes the following input features/parameters: pKa,
-fu,p , PSA, Log P, Log DpH 7.4, fun,p, Dmilk, pH 7.2, and Mu/Pu. This
-model will only work if these parameters are available.
+f<sub>u,p</sub>, PSA, Log P, Log D<sub>pH 7.4</sub>, f<sub>un,p</sub>,
+D<sub>milk, pH 7.2</sub>, and Mu/Pu. This model will only work if these
+parameters are available.
 
 In addition, for the other literature-based equations to work, please
 see the table below for any necessary inputs.
 
-| **Equation**                                   | **Development Approach** | **Main Inputs**                                                                                                               | **Drugs**        |
-|------------------------------------------------|--------------------------|-------------------------------------------------------------------------------------------------------------------------------|------------------|
-| Phase Distribution<sup>1</sup>                 | in-vitro                 | f<sub>plasma</sub><sup>un</sup>, f<sub>milk</sub><sup>un</sup>, fu,p, fu,sm, log D<sub>milk,pH 7.2</sub>, faq,milk, ffat,milk | All              |
-| Koshimichi et al.<sup>2</sup>                  | in-vitro                 | PSA, MW, log P, log D7.4, HBD, CL<sub>re</sub>, log D7.2, fu,p, fu,sm                                                         | All              |
-| Log Transformed Phase Distribution<sup>1</sup> | in-vitro                 | f<sub>plasma</sub><sup>un</sup>, f<sub>milk</sub><sup>un</sup>, fu,p, fu,sm, log D<sub>milk,pH 7.2</sub>, faq,milk, ffat,milk | Acidic and basic |
-| Meskin and Lien<sup>3</sup>                    | in-silico                | MW, log P, log U/D (pH – pKa)                                                                                                 | Acidic and basic |
+| **Equation**                                   | **Development Approach** | **Main Inputs**                                                                                                                                         | **Drugs**        |
+|------------------------------------------------|--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|------------------|
+| Phase Distribution<sup>1</sup>                 | in-vitro                 | f<sub>un, plasma</sub>, f<sub>un, milk</sub>, f<sub>u,p</sub>, f<sub>u,sm</sub>, log D<sub>milk,pH 7.2</sub>, f<sub>aq,milk</sub>, f<sub>fat,milk</sub> | All              |
+| Koshimichi et al.<sup>2</sup>                  | in-vitro                 | PSA, MW, log P, log D<sub>7.4</sub>, HBD, CL<sub>sec</sub>, CL<sub>re</sub>, log D<sub>7.2</sub>, f<sub>u,p</sub>, f<sub>u,sm</sub>                     | All              |
+| Log Transformed Phase Distribution<sup>1</sup> | in-vitro                 | f<sub>un, plasma</sub>, f<sub>un, milk</sub>, f<sub>u,p</sub>, f<sub>u,sm</sub>, log D<sub>milk,pH 7.2</sub>, f<sub>aq,milk</sub>, f<sub>fat,milk</sub> | Acidic and basic |
+| Meskin and Lien<sup>3</sup>                    | in-silico                | MW, log P, log U/D (pH – pKa)                                                                                                                           | Acidic and basic |
 
 1.  Fleishaker, J. C. Models and methods for predicting drug transfer
     into human milk. Advanced Drug Delivery Reviews 55, 643–652 (2003).
