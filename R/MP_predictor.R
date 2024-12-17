@@ -181,7 +181,7 @@ MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/c
                    HBD = as.numeric(molecule_properties.hbd),
                    LogP = as.numeric(molecule_properties.cx_logp),
                    LogD7.4 = as.numeric(molecule_properties.cx_logd)) %>%
-      dplyr::filter(stringr::str_detect(assay_description, stringr::regex("human|plasma", ignore_case = TRUE))) %>%
+#      dplyr::filter(stringr::str_detect(assay_description, stringr::regex("human|plasma", ignore_case = TRUE))) %>%
       dplyr::mutate(pka1 = dplyr::coalesce(pka1, pka2),
              pka2 = ifelse(pka2 == pka1, NA, pka2)) %>%
       dplyr::distinct(pka1, pka2, .keep_all = TRUE) %>%
