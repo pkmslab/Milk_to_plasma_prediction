@@ -28,6 +28,23 @@ However, the user also has the option to bypass the data scrape and input their 
 
 **Instructions on how to use the package described below**
 
+## Required information
+
+The XGBoost model utilizes the following input features/parameters: pKa, fu,p , PSA, Log P, Log DpH 7.4, fun,p, Dmilk, pH 7.2, and Mu/Pu. This model will only work if these parameters are available.
+
+In addition, for the other literature-based equations to work, please see the table below for any necessary inputs.
+
+| **Equation**                     | **Development Approach** | **Main Inputs**                                                                                     | **Drugs**            |
+|----------------------------------|--------------------------|----------------------------------------------------------------------------------------------------|----------------------|
+| Phase Distribution<sup>1</sup>  | in-vitro                 | f<sub>plasma</sub><sup>un</sup>, f<sub>milk</sub><sup>un</sup>, fu,p, fu,sm, log D<sub>milk,pH 7.2</sub>, faq,milk, ffat,milk | All                  |
+| Koshimichi et al.<sup>2</sup>   | in-vitro                 | PSA, MW, log P, log D7.4, HBD, CL<sub>re</sub>, log D7.2, fu,p, fu,sm                               | All                  |
+| Log Transformed Phase Distribution<sup>1</sup> | in-vitro | f<sub>plasma</sub><sup>un</sup>, f<sub>milk</sub><sup>un</sup>, fu,p, fu,sm, log D<sub>milk,pH 7.2</sub>, faq,milk, ffat,milk | Acidic and basic     |
+| Meskin and Lien<sup>3</sup>     | in-silico                | MW, log P, log U/D (pH – pKa)                                                                      | Acidic and basic     |
+
+1.	Fleishaker, J. C. Models and methods for predicting drug transfer into human milk. Advanced Drug Delivery Reviews 55, 643–652 (2003).
+2.	Koshimichi, H., Ito, K., Hisaka, A., Honma, M. & Suzuki, H. Analysis and prediction of drug transfer into human milk taking into consideration secretion and reuptake clearances across the mammary epithelia. Drug Metab Dispos 39, 2370–2380 (2011).
+3.	Meskin, M. S. & Lien, E. J. Qsar Analysis of Drug Excretion into Human Breast Milk. Journal of Clinical Pharmacy and Therapeutics 10, 269–278 (1985).
+
 
 ## Installation
 
