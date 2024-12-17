@@ -25,6 +25,10 @@ The goal of MP.prediction is to predict the milk-to-plasma ratio (MP) using XGBo
 
 However, the user also has the option to bypass the data scrape and input their own values for the parameters should the data not currently be available on ChEMBL or discrepancies between values exist. By simply inputting “custom” instead of a drug name into the function, the user will be presented with a blank table to input parameters that they would like to use. The function will then proceed to predict MPs with all the literature-based equations and the XGBoost ML model according to their own preferences.
 
+
+**Instructions on how to use the package described below**
+
+
 ## Installation
 
 You can install the development version of MP.prediction from [GitHub](https://github.com/) with:

@@ -33,6 +33,8 @@ like to use. The function will then proceed to predict MPs with all the
 literature-based equations and the XGBoost ML model according to their
 own preferences.
 
+**Instructions on how to use the package described below**
+
 ## Installation
 
 You can install the development version of MP.prediction from
