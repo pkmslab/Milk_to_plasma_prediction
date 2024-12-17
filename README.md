@@ -53,6 +53,8 @@ output you will obtain:
 suppressPackageStartupMessages(library(MP.prediction))
 ```
 
+### General function use with ChEMBL
+
 Here is how you can call the function to determine the MPs for aspirin
 and for a series of drugs. Each feature nested within the function will
 produce a time stamp. This allows the user to see each feature run in
@@ -62,4 +64,16 @@ real-time.
 ## Example code
 MP_prediction_function("aspirin")
 MP_prediction_function(c("dextromethorphan", "acetaminophen", "ibuprofen"))
+```
+
+### General function use for user-defined parameters
+
+Here is how you can call the function to calculate the MP for a new drug
+or for a drug not currently listed on ChEMBL. All the user needs to do
+is input the values corresponding to the respective heading in the
+table. Once input, the model will run all the calculations.
+
+``` r
+## Example code
+MP_prediction_function("custom")
 ```
