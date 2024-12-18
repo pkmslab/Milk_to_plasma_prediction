@@ -164,7 +164,7 @@ MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/c
     }
 
     for(standard_value in Fu_all_results$standard_value) {
-      if (Fu_all_results$standard_value != 0) {
+      if (standard_value != 0) {
       # Filter the activity results for specific types (e.g., "Fu")
       Fu_all_results <- Fu_all_results %>%
         dplyr::filter(tolower(Entry) == tolower(molecule_chembl_id), standard_type == "Fu")
