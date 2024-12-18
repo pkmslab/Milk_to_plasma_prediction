@@ -144,7 +144,7 @@ MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/c
 
       # If no data is returned, break the loop
       if (is.null(parsed_result$activities) || length(parsed_result$activities) == 0) {
-        message(chembl_id)
+        message(paste0("Scanning the database for:", chembl_id))
         break
       }
 
