@@ -77,7 +77,7 @@ MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/c
     }
   }
 
-  tictoc::tic("Molecular Properties")
+  tictoc::tic("Elapsed time")
   # Loop through each drug name in the list
   for(drug_name in drug_names_chembl) {
 
@@ -95,7 +95,7 @@ MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/c
 
       # If no data is returned, break the loop
       if (is.null(parsed_result$molecules) || length(parsed_result$molecules) == 0) {
-        message(drug_name)
+        message(paste0("Drug name: ", drug_name))
         break
       }
 
@@ -123,9 +123,7 @@ MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/c
     ID_all_results <- ID_all_results %>%
       dplyr::filter(tolower(Drug_Name) == tolower(pref_name))
   }
-  tictoc::toc()
 
-  tictoc::tic("Activity data")
   # Loop through each drug name in the list
   for(chembl_id in ID_all_results$molecule_chembl_id) {
 
@@ -144,7 +142,7 @@ MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/c
 
       # If no data is returned, break the loop
       if (is.null(parsed_result$activities) || length(parsed_result$activities) == 0) {
-        message(paste0("Scanning the database for:", chembl_id))
+        message(paste0("Scanning the database for: ", chembl_id))
         break
       }
 
@@ -190,12 +188,9 @@ MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/c
     drug_info <- drug_info %>%
       dplyr::select(Drugs, Type, MW, pka1, pka2, PSA, HBD, LogP, LogD7.4, fup)
   }
-  tictoc::toc()
 
   # Edit the data
   prelim_drug_data <- utils::edit(drug_info, editor = "xedit")
-
-  tictoc::tic("MP Predictions")
 
   # Required model parameters
   drug_data <- prelim_drug_data %>%
@@ -308,7 +303,7 @@ MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/c
   pred_xgboost <- predict(bstDMatrix, test_matrix)
   xgb_pred <- data.frame(MP_ratio = (10^pred_xgboost))
 
-  tictoc::toc()
+tictoc::toc()
 
   # Report values and corresponding drugs
   MP_values <- data.frame(Drug = drug_data$Drugs,
