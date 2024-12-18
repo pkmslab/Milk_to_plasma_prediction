@@ -189,6 +189,8 @@ MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/c
       dplyr::select(Drugs, Type, MW, pka1, pka2, PSA, HBD, LogP, LogD7.4, fup)
   }
 
+  message(paste0("Confirm/edit the data. When complete, close the editor."))
+
   # Edit the data
   prelim_drug_data <- utils::edit(drug_info, editor = "xedit")
 
