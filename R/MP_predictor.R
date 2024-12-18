@@ -164,11 +164,11 @@ MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/c
     }
 
     Fu_all_results <- Fu_all_results %>%
+      dplyr::filter(tolower(Entry) == tolower(molecule_chembl_id), standard_type == "Fu") %>%
       dplyr::mutate(
         standard_value = ifelse(is.na(standard_value), NA,
                                 ifelse(standard_value >= 0, standard_value, NA))
-      ) %>%
-      dplyr::filter(tolower(Entry) == tolower(molecule_chembl_id), standard_type == "Fu")
+      )
 
 
     # Combine molecule and activity data
