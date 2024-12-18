@@ -163,17 +163,13 @@ MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/c
       offset <- offset + limit
     }
 
-    for(standard_value in Fu_all_results$standard_value) {
-      if (standard_value >= 0) {
-      # Filter the activity results for specific types (e.g., "Fu")
-      Fu_all_results <- Fu_all_results %>%
-        dplyr::filter(tolower(Entry) == tolower(molecule_chembl_id), standard_type == "Fu")
-      }
-      else {
-        Fu_all_results <- Fu_all_results %>%
-          plyr::mutate(standard_value = NA)
-      }
-    }
+    Fu_all_results <- Fu_all_results %>%
+      dplyr::mutate(
+        standard_value = ifelse(is.na(standard_value), NA,
+                                ifelse(standard_value >= 0, standard_value, NA))
+      ) %>%
+      dplyr::filter(tolower(Entry) == tolower(molecule_chembl_id), standard_type == "Fu")
+
 
     # Combine molecule and activity data
     drug_info <- dplyr::left_join(ID_all_results, Fu_all_results, by = c("molecule_chembl_id" = "Entry")) %>%
