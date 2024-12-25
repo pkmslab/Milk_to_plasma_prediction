@@ -91,8 +91,8 @@ real-time.
 
 ``` r
 ## Example code
-MP_prediction_function("aspirin")
-MP_prediction_function(c("dextromethorphan", "acetaminophen", "ibuprofen"))
+MP_predictor("aspirin")
+MP_predictor(c("dextromethorphan", "acetaminophen", "ibuprofen"))
 ```
 
 ### General function use for user-defined parameters
@@ -104,5 +104,5 @@ table. Once input, the model will run all the calculations.
 
 ``` r
 ## Example code
-MP_prediction_function("custom")
+MP_predictor("custom")
 ```
