@@ -4,8 +4,6 @@ author: "Akash Panjabi, Anil Maharaj"
 date: "2024-12-01"
 output: github_document
 vignette: >
-  %\VignetteIndexEntry{MP-prediction}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
