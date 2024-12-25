@@ -2,8 +2,10 @@
 title: "MP.predictor"
 author: "Akash Panjabi, Anil Maharaj"
 date: "2024-12-01"
-output: github_document
+output: rmarkdown::html_vignette
 vignette: >
+  %\VignetteIndexEntry{MP.predictor}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
