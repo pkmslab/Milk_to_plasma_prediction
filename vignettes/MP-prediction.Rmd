@@ -1,5 +1,7 @@
 ---
-title: "MP-prediction"
+title: "MP.predictor"
+author: "Akash Panjabi, Anil Maharaj"
+date: "2024-12-01"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{MP-prediction}
@@ -17,3 +19,7 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(MP.prediction)
 ```
+
+# Introduction
+
+## Workflow
