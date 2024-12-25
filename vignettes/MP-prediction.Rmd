@@ -1,24 +1,19 @@
 ---
-title: "MP.prediction"
-author: "Akash Panjabi, Anil Maharaj"
-date: "2024-12-01"
+title: "MP-prediction"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{MP.prediction}
+  %\VignetteIndexEntry{MP-prediction}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include = FALSE}
+```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  eval = FALSE
+  comment = "#>"
 )
 ```
 
-```{r}
+```{r setup}
 library(MP.prediction)
 ```
-
-
