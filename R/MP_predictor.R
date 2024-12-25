@@ -38,7 +38,7 @@
 #### MP predictions ####
 
 # Function to get ChEMBL data for multiple drug names
-MP_prediction_function <- function(drug_names, ID_url = "https://www.ebi.ac.uk/chembl/api/data/molecule/search",
+MP_predictor <- function(drug_names, ID_url = "https://www.ebi.ac.uk/chembl/api/data/molecule/search",
                                    base_url = "https://www.ebi.ac.uk/chembl/api/data/activity", limit = 10000) {
 
   for (drug_name in drug_names) {
