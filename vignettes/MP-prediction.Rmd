@@ -9,10 +9,11 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, eval=FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = FALSE
 )
 ```
 
@@ -20,6 +21,64 @@ knitr::opts_chunk$set(
 library(MP.prediction)
 ```
 
-# Introduction
+## Introduction
 
-## Workflow
+The goal of MP.prediction is to predict the milk-to-plasma ratio (MP) using XGBoost. This function allows any user to use the developed trained XGBoost model to make predictions. The package was designed to take the reference name of any drug listed on the ChEMBL database as an input and return the corresponding MPs. The function within the R package has three features. The first feature is a scrape of the online database ChEMBL, where the package extracts data from the application programming interface (API) to obtain the physicochemical properties and, if available, the fraction unbound in the plasma. The second feature then presents the data to the user in the form of an editable table prior to conducting the MP calculations, so that the user can verify the values being input into all of the literature-based equations and the XGBoost model. At this stage, the user can edit any of the values belonging to each parameter. The final feature is making all the MP predictions for the literature-based equations and the XGBoost model. 
+
+However, the user also has the option to bypass the data scrape and input their own values for the parameters should the data not currently be available on ChEMBL or discrepancies between values exist. By simply inputting “custom” instead of a drug name into the function, the user will be presented with a blank table to input parameters that they would like to use. The function will then proceed to predict MPs with all the literature-based equations and the XGBoost ML model according to their own preferences.
+
+
+**Instructions on how to use the package described below**
+
+## Required information
+
+The XGBoost model utilizes the following input features/parameters: pKa, f<sub>u,p</sub>, PSA, Log P, Log D<sub>pH 7.4</sub>, f<sub>un,p</sub>, D<sub>milk, pH 7.2</sub>, and Mu/Pu. This model will only work if these parameters are available.
+
+In addition, for the other literature-based equations to work, please see the table below for any necessary inputs.
+
+| **Equation**                     | **Development Approach** | **Main Inputs**                                                                                     | **Drugs**            |
+|----------------------------------|--------------------------|----------------------------------------------------------------------------------------------------|----------------------|
+| Phase Distribution<sup>1</sup>  | in-vitro                 | f<sub>un, plasma</sub>, f<sub>un, milk</sub>, f<sub>u,p</sub>, f<sub>u,sm</sub>, log D<sub>milk,pH 7.2</sub>, f<sub>aq,milk</sub>, f<sub>fat,milk</sub> | All                  |
+| Koshimichi et al.<sup>2</sup>   | in-vitro                 | PSA, MW, log P, log D<sub>7.4</sub>, HBD, CL<sub>sec</sub>, CL<sub>re</sub>, log D<sub>7.2</sub>, f<sub>u,p</sub>, f<sub>u,sm</sub>                               | All                  |
+| Log Transformed Phase Distribution<sup>1</sup> | in-vitro | f<sub>un, plasma</sub>, f<sub>un, milk</sub>, f<sub>u,p</sub>, f<sub>u,sm</sub>, log D<sub>milk,pH 7.2</sub>, f<sub>aq,milk</sub>, f<sub>fat,milk</sub> | Acidic and basic     |
+| Meskin and Lien<sup>3</sup>     | in-silico                | MW, log P, log U/D (pH – pKa)                                                                      | Acidic and basic     |
+
+1.	Fleishaker, J. C. Models and methods for predicting drug transfer into human milk. Advanced Drug Delivery Reviews 55, 643–652 (2003).
+2.	Koshimichi, H., Ito, K., Hisaka, A., Honma, M. & Suzuki, H. Analysis and prediction of drug transfer into human milk taking into consideration secretion and reuptake clearances across the mammary epithelia. Drug Metab Dispos 39, 2370–2380 (2011).
+3.	Meskin, M. S. & Lien, E. J. Qsar Analysis of Drug Excretion into Human Breast Milk. Journal of Clinical Pharmacy and Therapeutics 10, 269–278 (1985).
+
+
+## Installation
+
+You can install the development version of MP.prediction from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("pkmslab/Milk_to_plasma_prediction")
+```
+
+## Example
+
+Below are basic examples which show you how to use the function and the output you will obtain:
+
+```r
+# Load the MP.prediction library
+suppressPackageStartupMessages(library(MP.prediction))
+```
+
+### General function use with ChEMBL
+Here is how you can call the function to determine the MPs for aspirin and for a series of drugs. Each feature nested within the function will produce a time stamp. This allows the user to see each feature run in real-time.   
+
+```r
+## Example code
+MP_predictor("aspirin")
+MP_predictor(c("dextromethorphan", "acetaminophen", "ibuprofen"))
+```
+
+### General function use for user-defined parameters
+Here is how you can call the function to calculate the MP for a new drug or for a drug not currently listed on ChEMBL. All the user needs to do is input the values corresponding to the respective heading in the table. Once input, the model will run all the calculations. 
+
+```r
+## Example code
+MP_predictor("custom")
+```
