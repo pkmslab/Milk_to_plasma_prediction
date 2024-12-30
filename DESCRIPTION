@@ -2,7 +2,7 @@ Package: MP.prediction
 Type: Package
 Title: Predicts the milk-to-plasma ratio (MP) using a variety of methods
 Version: 0.1.0
-Authors: 
+Author: 
     person("Anil", "Maharaj",
     email = "anil.maharaj@ubc.ca",
     role = c("aut", "cre")
