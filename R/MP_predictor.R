@@ -316,8 +316,8 @@ tictoc::toc()
                           Type = drug_data$Type,
                           Phase_Distribution_MP = PD,
                           Koshimichi_et_al_MP = Koshi,
-                          log_Phase_Distribution_MP = log_PD,
-                          M_and_L_MP = M_and_L,
+                          Log_Phase_Distribution_MP = log_PD,
+                          Meskin_and_Lien_MP = M_and_L,
                           XGBoost_MP = xgb_pred$MP_ratio)
 
   return(MP_values)
