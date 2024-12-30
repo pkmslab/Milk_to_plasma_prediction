@@ -61,7 +61,7 @@ Below are basic examples which show you how to use the function and the output y
 
 ```r
 # Load the MP.prediction library
-suppressPackageStartupMessages(library(MP.prediction))
+library(MP.prediction)
 ```
 
 ### General function use with ChEMBL

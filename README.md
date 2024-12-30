@@ -79,7 +79,7 @@ output you will obtain:
 
 ``` r
 # Load the MP.prediction library
-suppressPackageStartupMessages(library(MP.prediction))
+library(MP.prediction)
 ```
 
 ### General function use with ChEMBL

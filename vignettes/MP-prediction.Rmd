@@ -1,10 +1,10 @@
 ---
-title: "MP.predictor"
+title: "MP.predicton"
 author: "Akash Panjabi, Anil Maharaj"
 date: "2024-12-01"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{MP.predictor}
+  %\VignetteIndexEntry{MP.predicton}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -15,10 +15,6 @@ knitr::opts_chunk$set(
   comment = "#>",
   eval = FALSE
 )
-```
-
-```{r}
-library(MP.prediction)
 ```
 
 ## Introduction
@@ -63,7 +59,7 @@ Below are basic examples which show you how to use the function and the output y
 
 ```r
 # Load the MP.prediction library
-suppressPackageStartupMessages(library(MP.prediction))
+library(MP.prediction)
 ```
 
 ### General function use with ChEMBL
