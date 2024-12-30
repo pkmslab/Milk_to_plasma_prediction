@@ -314,10 +314,10 @@ tictoc::toc()
   # Report values and corresponding drugs
   MP_values <- data.frame(Drug = drug_data$Drugs,
                           Type = drug_data$Type,
-                          Phase_Distribution_MP = PD,
-                          Koshimichi_et_al_MP = Koshi,
-                          Log_Phase_Distribution_MP = log_PD,
-                          Meskin_and_Lien_MP = M_and_L,
+                          Phase_Distribution_MP = PD$Phase_Distribution_MP,
+                          Koshimichi_et_al_MP = Koshi$Koshi_MP,
+                          Log_Phase_Distribution_MP = log_PD$log_Phase_Distribution_MP,
+                          Meskin_and_Lien_MP = M_and_L$M_and_L_MP,
                           XGBoost_MP = xgb_pred$MP_ratio)
 
   return(MP_values)
