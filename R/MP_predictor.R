@@ -95,7 +95,7 @@ MP_predictor <- function(drug_names, ID_url = "https://www.ebi.ac.uk/chembl/api/
 
       # If no data is returned, break the loop
       if (is.null(parsed_result$molecules) || length(parsed_result$molecules) == 0) {
-        message(paste0("Drug name: ", drug_name))
+        message(paste0("Drug name search: ", drug_name))
         break
       }
 
