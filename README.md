@@ -33,7 +33,7 @@ like to use. The function will then proceed to predict MPs with all the
 literature-based equations and the XGBoost ML model according to their
 own preferences.
 
-**Instructions on how to use the package described below**
+**Instructions on how to use the package are described below**
 
 ## Required information
 
