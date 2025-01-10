@@ -11,6 +11,7 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
+  root.dir = '/vignettes',
   collapse = TRUE,
   comment = "#>",
   eval = FALSE
@@ -48,7 +49,7 @@ In addition, for the other literature-based equations to work, please see the ta
 
 You can install the development version of MP.prediction from [GitHub](https://github.com/) with:
 
-```r
+```{r}
 # install.packages("devtools")
 devtools::install_github("pkmslab/Milk_to_plasma_prediction")
 ```
@@ -57,7 +58,7 @@ devtools::install_github("pkmslab/Milk_to_plasma_prediction")
 
 Below are basic examples which show you how to use the function and the output you will obtain:
 
-```r
+```{r}
 # Load the MP.prediction library
 library(MP.prediction)
 ```
@@ -65,7 +66,7 @@ library(MP.prediction)
 ### General function use with ChEMBL
 Here is how you can call the function to determine the MPs for aspirin and for a series of drugs. Each feature nested within the function will produce a time stamp. This allows the user to see each feature run in real-time.   
 
-```r
+```{r}
 ## Example code
 MP_predictor("aspirin")
 MP_predictor(c("dextromethorphan", "acetaminophen", "ibuprofen"))
@@ -74,7 +75,7 @@ MP_predictor(c("dextromethorphan", "acetaminophen", "ibuprofen"))
 ### General function use for user-defined parameters
 Here is how you can call the function to calculate the MP for a new drug or for a drug not currently listed on ChEMBL. All the user needs to do is input the values corresponding to the respective heading in the table. Once input, the model will run all the calculations. 
 
-```r
+```{r}
 ## Example code
 MP_predictor("custom")
 ```
