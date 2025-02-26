@@ -298,7 +298,7 @@ MP_predictor <- function(drug_names,
   # Select variables
   XGB_data <- drug_data %>%
     dplyr::mutate(pKa1 = pka1) %>%
-    dplyr::select(pKa1, fup, PSA, LogP, LogD7.4, funp, MuPu)
+    dplyr::select(pKa1, fup, PSA, LogP, LogD7.4, MW, MuPu)
 
   # Store XGBoost variables as a matrix
   test_matrix <- xgboost::xgb.DMatrix(data = as.matrix(XGB_data))
