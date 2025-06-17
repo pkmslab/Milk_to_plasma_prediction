@@ -302,8 +302,6 @@ MP_predictor <- function(drug_names,
 
   # Store XGBoost variables as a matrix
   test_matrix <- xgboost::xgb.DMatrix(data = as.matrix(XGB_data))
-
-  ### NEED TO FIX XGBOOST
   xgbmodel <- system.file("extdata", "xgboost_model.rds", package = "MP.prediction")
   bstDMatrix <- readRDS(xgbmodel)
 
